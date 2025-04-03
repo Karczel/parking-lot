@@ -1,5 +1,5 @@
 import dbConnect from '../../lib/mongodb';
-import Item from '../../models/Vehicle';
+import Vehicle from '../../models/Vehicle';
 
 export default async function handler(req, res) {
   await dbConnect();
@@ -9,17 +9,19 @@ export default async function handler(req, res) {
   switch (method) {
     case 'GET':
       try {
-        const items = await Item.find({});
-        res.status(200).json({ success: true, data: items });
+        const vehicle = await Vehicle.find({});
+        res.status(200).json({ success: true, data: vehicle });
       } catch (error) {
         res.status(400).json({ success: false });
       }
       break;
     case 'POST':
       try {
-        const item = await Item.create(req.body);
-        res.status(201).json({ success: true, data: item });
+        const vehicle = await Vehicle.create(req.body);
+        res.status(201).json({ success: true, data: vehicle });
       } catch (error) {
+        console.error('Error creating vehicle:', error);
+
         res.status(400).json({ success: false });
       }
       break;
