@@ -1,6 +1,19 @@
 import { useState, useEffect } from 'react';
+import motorcycleVehicleFactory from '@/lib/VehicleFactory/MotorcycleVehicleFactory';
+import carVehicleFactory from '@/lib/VehicleFactory/CarVehicleFactory';
+import busVehicleFactory from '@/lib/VehicleFactory/BusVehicleFactory';
+
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import clsx from 'clsx'
 
 export default function Home() {
+  const vehicleTypes = [
+    {type: "Motorcycle", factory: motorcycleVehicleFactory},
+    {type: "Car", factory: carVehicleFactory},
+    {type: "Bus", factory: busVehicleFactory},
+  ]
+
   const [vehicle, setVehicle] = useState([]);
   const [form, setForm] = useState({ type: '', description: '' });
 
@@ -18,34 +31,64 @@ export default function Home() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleChangeListbox = (value: string): void => 
+    {  
+    setForm({ ...form, type: value });
+    }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const selectedVehicle = vehicleTypes.find((vehicle) => vehicle.type === form.type);
+
+    await selectedVehicle.factory.create(form.description);
     
-    try {
-      await fetch('/api/vehicles', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(form),
-      });
-      fetchVehicles();
-      setForm({ type: '', description: '' });
-    } catch (error) {
-      console.log(error);
-    }
+    fetchVehicles();
+    setForm({ type: '', description: '' });
+    
   };
 
   return (
     <div>
       <h1>Vehicles</h1>
-      <form onSubmit={handleSubmit}>
-        <input
+  
+      <form onSubmit={handleSubmit} className='flex'>
+      <Listbox
           name="type"
-          placeholder="Vehicle type"
+          aria-label="Vehicle type"
           value={form.type}
-          onChange={handleChange}
-        />
+          onChange={handleChangeListbox}
+        >
+          <div className="relative">
+            <ListboxButton 
+            className={clsx(
+              'relative block w-full rounded-lg bg-white/5 py-1.5 pr-8 pl-3 text-left text-sm/6 text-black',
+              'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25'
+            )}>
+              {form.type || "Select Vehicle Type"}
+              <ChevronDownIcon
+                className="group pointer-events-none absolute top-2.5 right-2.5 size-4 fill-white/60"
+                aria-hidden="true"
+              />
+            </ListboxButton>
+            <ListboxOptions anchor="bottom"
+            transition
+            className={clsx(
+              'w-[var(--button-width)] rounded-xl border border-white/5 bg-white/5 p-1 [--anchor-gap:var(--spacing-1)] focus:outline-none',
+              'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0'
+            )}
+            >
+              {vehicleTypes.map((vehicleType) => (
+                <ListboxOption 
+                key={vehicleType.type} 
+                value={vehicleType.type} 
+                className="data-[focus]:bg-blue-100">
+                  {vehicleType.type}
+                </ListboxOption>
+              ))}
+            </ListboxOptions>
+          </div>
+        </Listbox>
+
         <input
           name="description"
           placeholder="Vehicle description"

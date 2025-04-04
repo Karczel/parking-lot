@@ -10,7 +10,6 @@ const ParkingSpotSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  available: Boolean,
   vehicle : Vehicle,
 });
 

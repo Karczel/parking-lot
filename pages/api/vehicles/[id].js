@@ -1,4 +1,4 @@
-import dbConnect from '../../../lib/mongodb';
+import dbConnect from '../../../lib/MongooseDBConnector';
 import Vehicle from '../../../models/Vehicle';
 
 export default async function handler(req, res) {
