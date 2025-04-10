@@ -1,16 +1,16 @@
 import mongoose from 'mongoose';
-import Vehicle from './Vehicle';
 
 const ParkingSpotSchema = new mongoose.Schema({
-  _id: {
-    type: Number,
-    required: true
-  },
   size: {
     type: String,
+    enum: ['motorcycle', 'compact', 'large'],
     required: true
   },
-  vehicle : Vehicle,
+  vehicle : {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Vehicle',
+    default: null,
+  },
 });
 
 export default mongoose.models.ParkingSpot || mongoose.model('ParkingSpot', ParkingSpotSchema);

@@ -1,12 +1,9 @@
 import mongoose from 'mongoose';
-import ParkingSpot from './ParkingSpot';
 
 const LevelSchema = new mongoose.Schema({
-  _id: {
-    type: Number,
-    required: true
-  },
-  parking_spots: Array<ParkingSpot>[]
+  parking_spots: [
+    { type: mongoose.Schema.Types.ObjectId, ref: 'ParkingSpot' }
+  ]
 });
 
 export default mongoose.models.Level || mongoose.model('Level', LevelSchema);
