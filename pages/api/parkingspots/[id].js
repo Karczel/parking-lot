@@ -1,5 +1,5 @@
-import dbConnect from '../../../lib/MongooseDBConnector';
-import ParkingSpot from '../../../models/ParkingSpot';
+import dbConnect from '../../../lib/api/MongooseDBConnector';
+import ParkingSpot from '../../../schema/ParkingSpotSchema';
 
 export default async function handler(req, res) {
   const {

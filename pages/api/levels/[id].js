@@ -1,5 +1,5 @@
-import dbConnect from '../../../lib/MongooseDBConnector';
-import Level from '../../../models/Level';
+import dbConnect from '../../../lib/api/MongooseDBConnector';
+import Level from '../../../schema/LevelSchema';
 
 export default async function handler(req, res) {
   const {

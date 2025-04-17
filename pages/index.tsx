@@ -9,9 +9,9 @@ export default function Home() {
       Test text
         <CreateVehicle />
         <br/>
-        <ParkingSpaceManager />
+        {/* <ParkingSpaceManager /> */}
         <br/>
-        <ParkingManager />
+        {/* <ParkingManager /> */}
     </div>
   );
 }

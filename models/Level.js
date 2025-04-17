@@ -1,9 +1,24 @@
-import mongoose from 'mongoose';
+import ParkingSpot from './ParkingSpot';
 
-const LevelSchema = new mongoose.Schema({
-  parking_spots: [
-    { type: mongoose.Schema.Types.ObjectId, ref: 'ParkingSpot' }
-  ]
-});
+class Level {
+  constructor(parkingSpots = [], id) {
+    this.parkingSpots = parkingSpots;
+    this._id = id;
+  }
 
-export default mongoose.models.Level || mongoose.model('Level', LevelSchema);
+  getId(){
+    return this._id;
+  }
+
+  getSpots(){
+    return this.parkingSpots;
+  }
+
+  addSpots(spots) {
+    for (spot in spots){
+        this.parkingSpots.push(spot);
+    }
+  }
+}
+
+export default Level;

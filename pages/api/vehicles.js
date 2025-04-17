@@ -1,5 +1,5 @@
-import dbConnect from '../../lib/MongooseDBConnector';
-import Vehicle from '../../models/Vehicle';
+import dbConnect from '../../lib/api/MongooseDBConnector';
+import Vehicle from '../../schema/VehicleSchema';
 
 export default async function handler(req, res) {
   await dbConnect();
@@ -12,6 +12,8 @@ export default async function handler(req, res) {
         const vehicle = await Vehicle.find({});
         res.status(200).json({ success: true, data: vehicle });
       } catch (error) {
+        console.error("GET /api/vehicles error:", error);
+
         res.status(400).json({ success: false });
       }
       break;

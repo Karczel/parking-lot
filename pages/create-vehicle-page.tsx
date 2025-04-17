@@ -1,19 +1,18 @@
-import { useState, useEffect } from 'react';
-import motorcycleVehicleFactory from '@/lib/VehicleFactory/MotorcycleVehicleFactory';
-import carVehicleFactory from '@/lib/VehicleFactory/CarVehicleFactory';
-import busVehicleFactory from '@/lib/VehicleFactory/BusVehicleFactory';
+import { useState, useEffect, useMemo } from 'react';
+import vehicleController from '@/lib/VehicleController'
 
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
+import apiManager from '@/lib/api/APIManager';
 
 export default function CreateVehicle() {
-  const vehicleTypes = [
-    {type: "Motorcycle", factory: motorcycleVehicleFactory},
-    {type: "Car", factory: carVehicleFactory},
-    {type: "Bus", factory: busVehicleFactory},
-  ]
 
+  const vehicleTypes = useMemo(() => {
+    const factories = vehicleController.getVehicleFactories();
+    return Object.keys(factories ?? {});
+    }, []);
+  
   const [vehicle, setVehicle] = useState([]);
   const [form, setForm] = useState({ type: '', description: '' });
 
@@ -22,9 +21,8 @@ export default function CreateVehicle() {
   }, []);
 
   const fetchVehicles = async () => {
-    const res = await fetch('/api/vehicles');
-    const data = await res.json();
-    setVehicle(data.data);
+    const vehicles = await apiManager.fetchVehicles();
+    setVehicle(vehicles ?? []);
   };
 
   const handleChange = (e) => {
@@ -32,16 +30,13 @@ export default function CreateVehicle() {
   };
 
   const handleChangeListbox = (value: string): void => 
-    {  
+    {
     setForm({ ...form, type: value });
     }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const selectedVehicle = vehicleTypes.find((vehicle) => vehicle.type === form.type);
-
-    await selectedVehicle.factory.create(form.description);
-    
+    await vehicleController.getVehicleFactory(form.type).create(form.description);
     fetchVehicles();
     setForm({ type: '', description: '' });
     
@@ -79,10 +74,10 @@ export default function CreateVehicle() {
             >
               {vehicleTypes.map((vehicleType) => (
                 <ListboxOption 
-                key={vehicleType.type} 
-                value={vehicleType.type} 
+                key={vehicleType} 
+                value={vehicleType} 
                 className="data-[focus]:bg-blue-100">
-                  {vehicleType.type}
+                  {vehicleType}
                 </ListboxOption>
               ))}
             </ListboxOptions>

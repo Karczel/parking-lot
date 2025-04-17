@@ -1,16 +1,27 @@
-import mongoose from 'mongoose';
+// lib/models/ParkingSpot.ts
 
-const ParkingSpotSchema = new mongoose.Schema({
-  size: {
-    type: String,
-    enum: ['motorcycle', 'compact', 'large'],
-    required: true
-  },
-  vehicle : {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Vehicle',
-    default: null,
-  },
-});
+class ParkingSpot {
+    constructor(size, id) {
+      this._size = size;
+      this.vehicle = null;
+      this._id = id;
+    }
+  
+    getId(){
+        return this._id;
+    }
+    getSize(){
+        return this._size;
+    }
 
-export default mongoose.models.ParkingSpot || mongoose.model('ParkingSpot', ParkingSpotSchema);
+    getVehicle() {
+        return this.vehicle;
+    }
+
+    setVehicle(vehicle) {
+        this.vehicle = vehicle;
+    }
+  }
+  
+  export default ParkingSpot;
+  
