@@ -1,5 +1,6 @@
 'use client';
 
+import apiManager from '@/lib/api/APIManager';
 import { useEffect, useState } from 'react';
 
 export default function ParkingSpaceManager() {
@@ -8,38 +9,16 @@ export default function ParkingSpaceManager() {
   const [spotSize, setSpotSize] = useState('compact');
 
   useEffect(() => {
-    const fetchLevels = async () => {
-      try {
-        const response = await fetch('/api/levels');
-        const data = await response.json();
-        setLevels(data.data);
-      } catch (error) {
-        console.error('Failed to fetch levels:', error);
-      }
-    };
-
     fetchLevels();
   }, []);
 
+  const fetchLevels = async () => {
+    const levels = await apiManager.fetchLevels();
+    setLevels(levels);
+  };
+
   const addLevel = async () => {
-
-    try {
-      const response = await fetch('/api/levels', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-
-      if (response.ok) {
-        alert('Level created!');
-        window.location.reload();
-      } else {
-        alert('Failed to create level.');
-      }
-    } catch (error) {
-      console.error('Error creating level:', error);
-    }
+    await apiManager.createLevel();
   };
 
   const addParkingSpot = async () => {
@@ -47,46 +26,7 @@ export default function ParkingSpaceManager() {
       alert('Please select a level and spot size.');
       return;
     }
-  
-    try {
-      const spotResponse = await fetch('/api/parkingspots', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          size: spotSize,
-        }),
-      });
-  
-      if (!spotResponse.ok) {
-        alert('Failed to add parking spot.');
-        return;
-      }
-  
-      const spotData = await spotResponse.json();
-      const newSpotId = spotData.data._id; // grab newly created spot's id
-  
-      const levelResponse = await fetch(`/api/levels/${selectedLevel}`, {
-        method: 'PATCH', 
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          parking_spot_id: newSpotId,
-        }),
-      });
-  
-      if (levelResponse.ok) {
-        alert('Parking spot added and assigned to level!');
-        setSpotSize('motorcycle');
-        window.location.reload();
-      } else {
-        alert('Failed to assign parking spot to level.');
-      }
-    } catch (error) {
-      console.error('Error adding parking spot:', error);
-    }
+    await apiManager.createParkingSpot(spotSize, selectedLevel);
   };
   
 
